@@ -68,7 +68,8 @@ class WatchFaceRenderer(
             val rotation = (i.toDouble() * Math.PI * 2f / 12f) - (Math.PI / 2f)
             val dx = cos(rotation).toFloat() * 0.29f * bounds.width().toFloat()
             val dy = sin(rotation).toFloat() * 0.28f * bounds.height().toFloat()
-            val paint = if (12 - (zonedDateTime.hour % 12) == i) {
+            val paint = if (12 - (zonedDateTime.hour % 12) == i ||
+                (i == 0 && (zonedDateTime.hour == i || zonedDateTime.hour == 12))) {
                 assets.currentHourLabelPaint
             } else {
                 assets.hourLabelPaint
