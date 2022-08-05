@@ -1,4 +1,4 @@
-package net.fudanchii.sifrclock
+package net.fudanchii.sifrunclock
 
 
 import android.content.Context
@@ -44,6 +44,7 @@ class WatchFaceRenderer(
         if (renderParameters.drawMode == DrawMode.INTERACTIVE &&
                 renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)) {
             drawBackground(canvas, sharedAssets)
+            drawComplications(canvas, zonedDateTime)
             drawHourLabels(canvas, bounds, zonedDateTime, sharedAssets)
             drawHands(canvas, bounds, zonedDateTime, sharedAssets)
         }
@@ -133,5 +134,13 @@ class WatchFaceRenderer(
 
         /* Restore the canvas" original orientation. */
         canvas.restore()
+    }
+
+    private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
+        for ((_, complication) in complicationSlotsManager.complicationSlots) {
+            if (complication.enabled) {
+                complication.render(canvas, zonedDateTime, renderParameters)
+            }
+        }
     }
 }

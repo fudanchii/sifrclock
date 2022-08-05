@@ -1,13 +1,11 @@
-package net.fudanchii.sifrclock
+package net.fudanchii.sifrunclock
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.scale
-import androidx.palette.graphics.Palette
 import androidx.wear.watchface.Renderer
 
 private const val HOUR_STROKE_WIDTH = 5f

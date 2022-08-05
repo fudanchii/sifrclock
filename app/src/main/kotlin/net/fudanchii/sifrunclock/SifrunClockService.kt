@@ -1,4 +1,4 @@
-package net.fudanchii.sifrclock
+package net.fudanchii.sifrunclock
 
 import android.view.SurfaceHolder
 import androidx.wear.watchface.CanvasType
@@ -8,8 +8,13 @@ import androidx.wear.watchface.WatchFaceService
 import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
+import net.fudanchii.sifrunclock.complications.SlotsManager
 
-class Service: WatchFaceService() {
+class SifrunClockService: WatchFaceService() {
+    override fun createComplicationSlotsManager(currentUserStyleRepository: CurrentUserStyleRepository): ComplicationSlotsManager {
+        return SlotsManager.create(applicationContext, currentUserStyleRepository)
+    }
+
     override suspend fun createWatchFace(
         surfaceHolder: SurfaceHolder,
         watchState: WatchState,
