@@ -40,4 +40,13 @@
     <color name="gray_white">#EEEEEE</color>
     <color name="dark_pink">#F50057</color>
     <color name="dark_blue">#1565C0</color>
+    <color name="night_1">#432967</color>
+    <color name="night_2">#463F6D</color>
+    <color name="dawn5">#782D65</color>
+    <color name="dawn6">#FD9367</color>
+    <color name="morning">#FDCD83</color>
+    <color name="noon">#FFF997</color>
+    <color name="afternoon">#FECDB4</color>
+    <color name="dusk5">#FC8982</color>
+    <color name="dusk6">#67557A</color>
 </resources>

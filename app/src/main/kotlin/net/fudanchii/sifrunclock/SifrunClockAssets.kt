@@ -2,13 +2,6 @@ package net.fudanchii.sifrunclock
 
 import android.content.Context
 import android.graphics.*
-import android.hardware.display.DisplayManager
-import android.os.Build
-import android.util.DisplayMetrics
-import android.view.Display
-import android.view.WindowInsetsAnimation
-import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.core.graphics.scale
 import androidx.wear.watchface.Renderer
 import kotlin.math.cos
@@ -21,18 +14,28 @@ private const val SECOND_TICK_STROKE_WIDTH = 2f
 
 private val SHADOW_RADIUS = 6f
 
-class WatchFaceAssets(private val context: Context): Renderer.SharedAssets {
+class WatchFaceAssets(context: Context): Renderer.SharedAssets {
     val bgPaint: Paint = Paint().apply { color = Color.BLACK }
-    val bgBitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.watchface_service_bg)
-        .scale(
-            context.resources.displayMetrics.widthPixels,
-            context.resources.displayMetrics.heightPixels,
-            true
-        )
+
+    private val displayWidth = context.resources.displayMetrics.widthPixels
+    private val displayHeight = context.resources.displayMetrics.heightPixels
+
+    val bgBitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.watchface_service_bg_v2)
+        .scale(displayWidth, displayHeight, false)
 
     private val shadowColor: Int = Color.BLACK
     private val handColor: Int = Color.WHITE
     private val hiHandColor: Int = Color.RED
+
+    val bgNight1Color: Int = context.resources.getColor(R.color.night_1, context.theme)
+    val bgNight2Color: Int = context.resources.getColor(R.color.night_2, context.theme)
+    val bgDawn5Color: Int = context.resources.getColor(R.color.dawn5, context.theme)
+    val bgDawn6Color: Int = context.resources.getColor(R.color.dawn6, context.theme)
+    val bgMorningColor: Int = context.resources.getColor(R.color.morning, context.theme)
+    val bgNoonColor: Int = context.resources.getColor(R.color.noon, context.theme)
+    val bgAfternoonColor: Int = context.resources.getColor(R.color.afternoon, context.theme)
+    val bgDusk5Color: Int = context.resources.getColor(R.color.dusk5, context.theme)
+    val bgDusk6Color: Int = context.resources.getColor(R.color.dusk6, context.theme)
 
     val hourPaint: Paint = Paint().apply {
         color = handColor
@@ -78,9 +81,8 @@ class WatchFaceAssets(private val context: Context): Renderer.SharedAssets {
     var hourLocations: MutableList<Pair<Float, Float>> = mutableListOf()
 
     init {
-        var textBounds = Rect()
-        val displayMetrics = context.resources.displayMetrics
-        val bounds: Rect = Rect(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        val textBounds = Rect()
+        val bounds = Rect(0, 0, displayWidth, displayHeight)
 
         for (i in 0 until 12) {
             hourLabelPaint.getTextBounds(hours[i], 0, hours[i].length, textBounds)

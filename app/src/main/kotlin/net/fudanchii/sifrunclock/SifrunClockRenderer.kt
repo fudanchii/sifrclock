@@ -2,31 +2,25 @@ package net.fudanchii.sifrunclock
 
 
 import android.content.Context
-
 import android.graphics.Canvas
-
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
-import android.os.Build
-
 import android.view.SurfaceHolder
-import androidx.annotation.RequiresApi
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.Renderer
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.WatchFaceLayer
-
 import java.time.ZonedDateTime
-import kotlin.math.cos
-import kotlin.math.sin
 
 private const val CENTER_GAP_AND_CIRCLE_RADIUS = 4f
 
 private const val FRAME_PERIOD_MS_DEFAULT: Long = 16L
 
 class WatchFaceRenderer(
-    private val context: Context,
+    context: Context,
     surfaceHolder: SurfaceHolder,
     currentUserStyleRepository: CurrentUserStyleRepository,
     watchState: WatchState,
@@ -45,9 +39,9 @@ class WatchFaceRenderer(
     override fun render(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime, sharedAssets: WatchFaceAssets) {
         if (renderParameters.drawMode == DrawMode.INTERACTIVE &&
                 renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)) {
-            drawBackground(canvas, sharedAssets)
+            drawBackground(canvas, zonedDateTime, sharedAssets)
             drawComplications(canvas, zonedDateTime)
-            drawHourLabels(canvas, bounds, zonedDateTime, sharedAssets)
+            drawHourLabels(canvas, zonedDateTime, sharedAssets)
             drawHands(canvas, bounds, zonedDateTime, sharedAssets)
         }
     }
@@ -59,14 +53,30 @@ class WatchFaceRenderer(
         return assets
     }
 
-    private fun drawBackground(canvas: Canvas, assets: WatchFaceAssets) {
+    private fun drawBackground(canvas: Canvas,dateTime: ZonedDateTime, assets: WatchFaceAssets) {
+        val color = when (dateTime.hour) {
+            in 0..3 -> assets.bgNight2Color
+            5 -> assets.bgDawn5Color
+            6 -> assets.bgDawn6Color
+            in 7..10 -> assets.bgMorningColor
+            in 11..14 -> assets.bgNoonColor
+            in 15..16 -> assets.bgAfternoonColor
+            17 -> assets.bgDusk5Color
+            18 -> assets.bgDusk6Color
+            else -> assets.bgNight1Color
+        }
+        assets.bgPaint.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
         canvas.drawBitmap(assets.bgBitmap, 0f, 0f, assets.bgPaint)
     }
 
     private fun currentHourIs(hour: Int, i: Int): Boolean =
         (12 - (hour % 12) == i) || (i == 0 && (hour == i || hour == 12))
 
-    private fun drawHourLabels(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime, assets: WatchFaceAssets) {
+    private fun drawHourLabels(
+        canvas: Canvas,
+        zonedDateTime: ZonedDateTime,
+        assets: WatchFaceAssets
+    ) {
         for (i in 0 until 12) {
             val paint = if (currentHourIs(zonedDateTime.hour, i)) {
                 assets.currentHourLabelPaint
