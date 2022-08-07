@@ -6,8 +6,10 @@ import android.content.Context
 import android.graphics.Canvas
 
 import android.graphics.Rect
+import android.os.Build
 
 import android.view.SurfaceHolder
+import androidx.annotation.RequiresApi
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.Renderer
@@ -61,27 +63,19 @@ class WatchFaceRenderer(
         canvas.drawBitmap(assets.bgBitmap, 0f, 0f, assets.bgPaint)
     }
 
-    private fun drawHourLabels(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime, assets: WatchFaceAssets) {
-        val textBounds = Rect()
-        for (i in 0 until 12) {
-            assets.hourLabelPaint.getTextBounds(assets.hours[i], 0, assets.hours[i].length, textBounds)
+    private fun currentHourIs(hour: Int, i: Int): Boolean =
+        (12 - (hour % 12) == i) || (i == 0 && (hour == i || hour == 12))
 
-            val rotation = (i.toDouble() * Math.PI * 2f / 12f) - (Math.PI / 2f)
-            val dx = cos(rotation).toFloat() * 0.29f * bounds.width().toFloat()
-            val dy = sin(rotation).toFloat() * 0.28f * bounds.height().toFloat()
-            val paint = if (12 - (zonedDateTime.hour % 12) == i ||
-                (i == 0 && (zonedDateTime.hour == i || zonedDateTime.hour == 12))) {
+    private fun drawHourLabels(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime, assets: WatchFaceAssets) {
+        for (i in 0 until 12) {
+            val paint = if (currentHourIs(zonedDateTime.hour, i)) {
                 assets.currentHourLabelPaint
             } else {
                 assets.hourLabelPaint
             }
 
-            canvas.drawText(
-                assets.hours[i],
-                bounds.exactCenterX() + dx - textBounds.width() / 2.0f - 2,
-                bounds.exactCenterY() + dy + textBounds.height() / 2.0f + 6,
-                paint
-            )
+            val (x, y) = assets.hourLocations[i]
+            canvas.drawText(assets.hours[i], x, y, paint)
         }
     }
 

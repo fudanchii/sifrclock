@@ -1,12 +1,19 @@
 package net.fudanchii.sifrunclock
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
+import android.hardware.display.DisplayManager
+import android.os.Build
+import android.util.DisplayMetrics
+import android.view.Display
+import android.view.WindowInsetsAnimation
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.scale
 import androidx.wear.watchface.Renderer
+import kotlin.math.cos
+import kotlin.math.sin
+
 
 private const val HOUR_STROKE_WIDTH = 5f
 private const val MINUTE_STROKE_WIDTH = 3f
@@ -68,6 +75,28 @@ class WatchFaceAssets(private val context: Context): Renderer.SharedAssets {
     }
 
     val hours = arrayOf("١٢", "١١", "١٠", "٩", "٨", "٧", "٦", "٥", "٤", "٣", "٢", "١")
+    var hourLocations: MutableList<Pair<Float, Float>> = mutableListOf()
+
+    init {
+        var textBounds = Rect()
+        val displayMetrics = context.resources.displayMetrics
+        val bounds: Rect = Rect(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+
+        for (i in 0 until 12) {
+            hourLabelPaint.getTextBounds(hours[i], 0, hours[i].length, textBounds)
+
+            val rotation = (i.toDouble() * Math.PI * 2f / 12f) - (Math.PI / 2f)
+            val dx = cos(rotation).toFloat() * 0.29f * bounds.width().toFloat()
+            val dy = sin(rotation).toFloat() * 0.28f * bounds.height().toFloat()
+
+            hourLocations.add(
+                Pair(
+                    bounds.exactCenterX() + dx - (textBounds.width() / 2.0f) - 2,
+                    bounds.exactCenterY() + dy + (textBounds.height() / 2.0f) + 6,
+                )
+            )
+        }
+    }
 
     override fun onDestroy() { }
 }
