@@ -20,8 +20,6 @@ private const val LEFT_AND_RIGHT_COMPLICATIONS_BOTTOM_BOUND = 0.5875f
 private const val LEFT_COMPLICATION_LEFT_BOUND = 0.275f
 private const val LEFT_COMPLICATION_RIGHT_BOUND = 0.45f
 
-private const val DEFAULT_COMPLICATION_STYLE_DRAWABLE_ID = R.drawable.complication_default_style
-
 // Unique IDs for each complication. The settings activity that supports allowing users
 // to select their complication data provider requires numbers to be >= 0.
 internal const val LEFT_COMPLICATION_ID = 100
@@ -47,7 +45,7 @@ class SlotsManager {
             val defaultCanvasComplicationFactory =
                 CanvasComplicationFactory { watchState, listener ->
                     CanvasComplicationDrawable(
-                        ComplicationDrawable.getDrawable(context, DEFAULT_COMPLICATION_STYLE_DRAWABLE_ID)!!,
+                        ComplicationDrawable.getDrawable(context, R.drawable.complication_default_style)!!,
                         watchState,
                         listener
                     )
